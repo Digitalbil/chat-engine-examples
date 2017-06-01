@@ -8,6 +8,6 @@
   },
   "author": "Ian Jennings",
   "dependencies": {
-    "ocf": "0.0.5"
+    "ocf": "^0.1.5"
   }
 }
