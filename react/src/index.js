@@ -7,13 +7,16 @@ const now = new Date().getTime();
 const username = ['user', now].join('-');
 
 const ChatEngine = ChatEngineCore.create({
-  publishKey: 'pub-c-ea1b85f7-8895-4514-b0e0-b505eaaa1b62',
-  subscribeKey: 'sub-c-7397fa12-43a3-11e6-bfbb-02ee2ddab7fe'
-}, 'chat-engine-demo-react');
+    publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
+    subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe'
+}, {
+    globalChannel: 'chat-engine-react',
+    authUrl: 'http://localhost:3000/insecure'
+});
 
 ChatEngine.connect(username, {
     signedOnTime: now
-});
+}, 'auth-key');
 
 var Message = React.createClass({
   render: function() {
@@ -87,7 +90,11 @@ var Chat = React.createClass({
   },
 });
 
-ReactDOM.render(
-  <Chat />,
-  document.getElementById('root')
-);
+ChatEngine.on('$.ready', () => {
+
+  ReactDOM.render(
+    <Chat />,
+    document.getElementById('root')
+  );
+
+});
