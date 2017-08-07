@@ -76,7 +76,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
         let profile = localStorage.getItem('profile');
 
         if(profile) {
-            profile = JSON.parse(profile);x
+            profile = JSON.parse(profile);
             ChatEngine.connect(profile.user_id, profile, localStorage.getItem('access_token'));
         }
 
@@ -213,10 +213,10 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
                 }
 
-                room.chat.on('$history.message', function(payload) {
+                room.chat.on('$.history.message', function(payload) {
 
                     // render it in the DOM with a special class
-                    addMessage(payload, '$history.message');
+                    addMessage(payload, '$.history.message');
 
                 });
                 room.chat.history('message');
@@ -227,7 +227,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
                     addMessage(payload, 'message');
                 });
 
-                room.chat.on('$history.upload', function(payload) {
+                room.chat.on('$.history.upload', function(payload) {
 
                     // render it in the DOM with a special class
                     addMessage(payload, 'upload');
@@ -379,7 +379,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
             $scope.scrollToBottom();
         });
 
-        $scope.chat.on('$history.*', () => {
+        $scope.chat.on('$.history.*', () => {
             $scope.scrollToBottom();
         });
 
