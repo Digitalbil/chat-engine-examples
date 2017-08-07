@@ -1,24 +1,10 @@
 let me;
 let ChatEngine;
 
-const setup = function() {
-
-    // ChatEngine Configure
-    ChatEngine = ChatEngineCore.create({
-        publishKey: 'pub-c-07824b7a-6637-4e6d-91b4-7f0505d3de3f',
-        subscribeKey: 'sub-c-43b48ad6-d453-11e6-bd29-0619f8945a4f'
-    }, 'chat-engine-jquery-kitchen-sink');
-
-    ChatEngine.onAny((event, data) => {
-        // console.log(event, data);
-    });
-
-}
-
 const $chatTemplate = function(chat) {
 
     let html =
-        '<div class="chat col-xs-6" id="' + chat.channel + '">' +
+        '<div class="chat col-xs-12" id="' + chat.channel + '">' +
             '<div class="card">' +
                 '<div class="card-header">' +
                     '<div class="col-sm-6">'  +
@@ -78,9 +64,6 @@ const $userTemplate = function(user, chat) {
 
 // function to create concept of "me"
 const identifyMe = function() {
-
-    // create a user for myself and store as ```me```
-    me = ChatEngine.connect(new Date().getTime().toString());
 
     me.plugin(ChatEngineCore.plugin['chat-engine-random-username'](ChatEngine.globalChat));
 
@@ -144,25 +127,17 @@ const renderOnlineList = function($el, chat) {
     }
 
     // when someone joins the chat
-    chat.on('$.online', (payload) => {
+    chat.on('$.online.*', (payload) => {
         // render the user in the online list and bind events
         renderUser($el, payload.user, chat);
     });
 
-    // when someone joins the chat
-    chat.on('$.online', (payload) => {
-        // render the user in the online list and bind events
-        renderUser($el, payload.user, chat);
-    });
-
-    chat.on('$.disconnect', (payload) => {
-        renderUser($el, payload.user, chat);
-    });
-
-    // when someone leaves the chat
-    chat.on('$.leave', (payload) => {
-        // remove the user from the online list
+    chat.on('$.offline.*', (payload) => {
         $('.' + payload.user.uuid).remove();
+    });
+
+    chat.on('$.state', (payload) => {
+        renderUser($el, payload.user, chat);
     });
 
     chat.plugin(ChatEngineCore.plugin['chat-engine-typing-indicator']({
@@ -243,7 +218,10 @@ const renderChat = function(privateChat) {
     });
 
     // if this chat receives a message that's not from this sessions
-    privateChat.on('$history.message', function(payload) {
+    privateChat.on('$.history.message', function(payload) {
+
+        console.log(payload)
+
         // render it in the DOM with a special class
         renderMessage(payload, 'text-muted');
     });
@@ -321,15 +299,30 @@ const bindUsernamePlugin = function() {
 
 }
 
-// setup the ChatEngine framework
-setup();
+// ChatEngine Configure
+ChatEngine = ChatEngineCore.create({
+    publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
+    subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe'
+}, {
+    globalChannel: 'chat-engine-jquery-kitchen-sink',
+    authUrl: 'http://localhost:3000/insecure'
+});
 
-// set up the concept of me and globalChat
-identifyMe();
+// create a user for myself and store as ```me```
+ChatEngine.connect(new Date().getTime().toString(), {}, 'auth-key');
 
-// render the ChatEngine.globalChat now that it's defined
-// this onlineList can spawn other chats
-renderOnlineList($('#online-list'), ChatEngine.globalChat);
+ChatEngine.on('$.ready', (data) => {
 
-// plug the search bar into the username plugin
-bindUsernamePlugin();
+    me = data.me;
+
+    // set up the concept of me and globalChat
+    identifyMe();
+
+    // render the ChatEngine.globalChat now that it's defined
+    // this onlineList can spawn other chats
+    renderOnlineList($('#online-list'), ChatEngine.globalChat);
+
+    // plug the search bar into the username plugin
+    bindUsernamePlugin();
+
+});

@@ -57,11 +57,11 @@
             authUrl: 'http://localhost:3000/insecure'
         });
 
-        var me = ChatEngine.connect(username, {}, 'auth-key');
+        ChatEngine.connect(username, {}, 'auth-key');
 
         ChatEngine.on('$.ready', () => {
 
-            var chat = new ChatEngine.Chat('facebookchat');
+            var chat = new ChatEngine.Chat('jquery-chat');
 
             $('#submit').click(() => {
 
@@ -79,6 +79,12 @@
                 $('#chat').append($('<p><strong>' + payload.sender.uuid + ':</strong> ' + payload.data.text + '</p>'));
 
             });
+
+            chat.onAny((event, data) => {
+                console.log(event, data);
+            })
+
+            chat.history('message');
 
         });
     </script>
