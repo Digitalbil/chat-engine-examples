@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <script src="../node_modules/chat-engine/dist/chat-engine.js" type="text/javascript"></script>
+    <script src="../../../chat-engine/dist/chat-engine.js" type="text/javascript"></script>
 
     <script type="text/javascript">
 
@@ -47,38 +47,47 @@
     const textInput = document.getElementById('chat-input');
     const textOutput = document.getElementById('chat-output');
 
-    const ChatEngine = ChatEngineCore.create({
-        publishKey: 'pub-c-07824b7a-6637-4e6d-91b4-7f0505d3de3f',
-        subscribeKey: 'sub-c-43b48ad6-d453-11e6-bd29-0619f8945a4f'
-    }, 'chat-engine-demo-js');
+    let sendChat = function(){}; // will be filled in when ChatEngine connects
 
-    let me = ChatEngine.connect(username, {
-        signedOnTime: now
+    const ChatEngine = ChatEngineCore.create({
+        publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
+        subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe',
+    }, {
+        globalChannel: 'chat-engine-demo-js',
+        authUrl: 'http://localhost:3000/insecure'
     });
 
-    const sendChat = function (e) {
+    ChatEngine.connect(username, {
+        signedOnTime: now
+    }, 'auth-key');
 
-        ChatEngine.globalChat.emit('message', {
-            text: textInput.value
+    ChatEngine.on('$.ready', () => {
+
+        sendChat = function (e) {
+
+            ChatEngine.globalChat.emit('message', {
+                text: textInput.value
+            });
+
+            textInput.value = '';
+
+            return false;
+
+        };
+
+        ChatEngine.globalChat.on('message', (payload) => {
+
+            let div = document.createElement("p");
+            div.innerHTML = payload.sender.uuid + ': ' + payload.data.text;
+            textOutput.appendChild(div);
+
         });
 
-        textInput.value = '';
-
-        return false;
-
-    };
-
-    ChatEngine.globalChat.on('message', (payload) => {
-
-        let div = document.createElement("p");
-        div.innerHTML = payload.sender.uuid + ': ' + payload.data.text;
-        textOutput.appendChild(div);
+        ChatEngine.globalChat.onAny((event, data) => {
+            console.info(event, data)
+        });
 
     });
-
-    ChatEngine.globalChat.onAny((event, data) => {
-        console.info(event, data)
-    })
     </script>
 
 </body>

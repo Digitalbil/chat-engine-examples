@@ -77,7 +77,7 @@ export default class PizzaTranslator extends Component {
       <View style={{padding: 10}}>
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={(rowData) => <View><Image source={{uri: 'https:' + rowData.sender.state().gravatar, cache: 'reload'}} /><Text>{rowData.data.text} {rowData.sender.uuid}</Text></View>}
+        renderRow={(rowData) => <View><Image style={{width: 100, height: 100}} source={{uri: 'https:' + rowData.sender.state().gravatar, cache: 'reload'}} /><Text>{rowData.sender.uuid}: {rowData.data.text}</Text></View>}
       />
        <TextInput
          style={{height: 40}}

@@ -10,7 +10,7 @@ const setup = function() {
     }, 'chat-engine-jquery-kitchen-sink');
 
     ChatEngine.onAny((event, data) => {
-        console.log(event, data);
+        // console.log(event, data);
     });
 
 }
@@ -111,8 +111,6 @@ const renderUser = function($el, user, chat) {
 
         // create a new chat with that channel
         let newChat = new ChatEngine.Chat(chan);
-
-        console.log(newChat, chan)
 
         // render the new chat on the dom
         renderChat(newChat);
