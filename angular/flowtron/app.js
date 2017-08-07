@@ -8,7 +8,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
         lockProvider.init({
           clientID: 'BiY_C0X0jFeVZ8KlxFqMKwT1xrn96xTM',
-          domain: 'pubnub-chat-engine.auth0.com',
+          domain: 'pubnub-ocf.auth0.com',
             options: {
               _idTokenVerification: false
             }
@@ -25,12 +25,14 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
         if(profile && profile.length) {
 
             profile = JSON.parse(profile);
-            Me.profile = ChatEngine.connect(profile.user_id, profile);
 
         }
 
         lock.on('authenticated', function(authResult) {
 
+            console.log(authResult)
+
+            localStorage.setItem('access_token', authResult.accessToken);
             localStorage.setItem('id_token', authResult.idToken);
 
             lock.getProfile(authResult.idToken, function(error, profile) {
@@ -41,13 +43,14 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
                 localStorage.setItem('profile', JSON.stringify(profile));
 
-                // connect to ChatEngine
-                Me.profile = ChatEngine.connect(profile.user_id, profile);
-
                 $state.go('dash')
 
             });
         });
+
+        ChatEngine.on('$.ready', (data) => {
+            Me.profile = data.me;
+        })
 
     })
     .factory('Me', function() {
@@ -59,11 +62,23 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
     })
     .factory('ChatEngine', function(ngChatEngine) {
 
+        console.log('chat engine')
+
         // ChatEngine Configure
-        let ChatEngine = ChatEngineCore.create({
-            publishKey: 'pub-c-07824b7a-6637-4e6d-91b4-7f0505d3de3f',
-            subscribeKey: 'sub-c-43b48ad6-d453-11e6-bd29-0619f8945a4f'
-        }, 'chat-engine-demo-flowtron');
+        const ChatEngine = ChatEngineCore.create({
+            publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
+            subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe'
+        }, {
+            globalChannel: 'chat-engine-flowtron',
+            authUrl: 'http://localhost:3000/insecure'
+        });
+
+        let profile = localStorage.getItem('profile');
+
+        if(profile) {
+            profile = JSON.parse(profile);x
+            ChatEngine.connect(profile.user_id, profile, localStorage.getItem('access_token'));
+        }
 
         // bind open chat framework angular plugin
         ngChatEngine.bind(ChatEngine);
@@ -88,7 +103,19 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
             .state('dash', {
                 url: '/dash',
                 templateUrl: 'views/dash.html',
-                controller: 'ChatAppController'
+                controller: 'ChatAppController',
+                resolve: {
+                    ready: function($q, ChatEngine) {
+
+                        var deferred = $q.defer();
+
+                        ChatEngine.on('$.ready', function () {
+                            deferred.resolve();
+                        });
+
+                        return deferred.promise;
+                    }
+                }
             })
             .state('dash.chat', {
                 url: '/:channel',
