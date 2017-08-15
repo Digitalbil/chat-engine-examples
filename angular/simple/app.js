@@ -4,7 +4,7 @@ angular.module('chatApp', ['open-chat-framework'])
         // ChatEngine Configure
         $rootScope.ChatEngine = ChatEngineCore.create({
             publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
-            subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe'
+            subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe',
         }, {
             globalChannel: 'chat-engine-angular-simple',
             authUrl: 'http://localhost:3000/insecure'
@@ -85,28 +85,24 @@ angular.module('chatApp', ['open-chat-framework'])
     })
     .controller('OnlineUser', function($scope) {
 
-        $scope.invite = function(user, channel) {
-
-            console.log('sending invite to ', user, channel)
-
-            // send the clicked user a private message telling them we invited them
-            user.direct.emit('private-invite', {channel: channel});
-
-        }
-
         // create a new chat
         $scope.newChat = function(user) {
 
-            // define a channel using the clicked user's username and this client's username
-            let chan = new Date().getTime();
+            // define a channel
+            let chan = new Date().getTime() + 'something';
 
             // create a new chat with that channel
             let newChat = new $scope.ChatEngine.Chat(chan);
 
-            $scope.invite(user, chan);
+            newChat.on('$.connected', () => {
 
-            // add the chat to the list
-            $scope.chats.push(newChat);
+                // this fires a private invite to the user
+                newChat.invite(user);
+
+                // add the chat to the list
+                $scope.chats.push(newChat);
+
+            });
 
         };
 
@@ -120,22 +116,18 @@ angular.module('chatApp', ['open-chat-framework'])
         $scope.ChatEngine.on('$.ready', (data) => {
 
             $scope.me = data.me;
-            $scope.me.plugin(ChatEngineCore.plugin['chat-engine-random-username']($scope.ChatEngine.globalChat));
+            $scope.me.plugin(ChatEngineCore.plugin['chat-engine-random-username']($scope.ChatEngine.global));
 
-            $scope.ChatEngine.globalChat.plugin(ChatEngineCore.plugin['chat-engine-online-user-search']());
+            $scope.ChatEngine.global.plugin(ChatEngineCore.plugin['chat-engine-online-user-search']());
 
-            // when I get a private invite
-            $scope.me.direct.on('private-invite', (payload) => {
-
+            // when I get a private invit
+            $scope.me.direct.on('$.invite', (payload) => {
                 // create a new chat and render it in DOM
                 $scope.chats.push(new $scope.ChatEngine.Chat(payload.data.channel));
-
             });
 
             // bind chat to updates
-            $scope.chat = $scope.ChatEngine.globalChat;
-
-            console.log($scope.chat)
+            $scope.chat = $scope.ChatEngine.global;
 
             // hide / show usernames based on input
             $scope.userSearch = {
@@ -143,7 +135,7 @@ angular.module('chatApp', ['open-chat-framework'])
                 fire: () => {
 
                     // get a list of our matching users
-                    let found = $scope.ChatEngine.globalChat.onlineUserSearch.search($scope.userSearch.input);
+                    let found = $scope.ChatEngine.global.onlineUserSearch.search($scope.userSearch.input);
 
                     // hide every user
                     for(let uuid in $scope.chat.users) {
@@ -163,7 +155,7 @@ angular.module('chatApp', ['open-chat-framework'])
                 users: $scope.userAdd,
                 fire: () => {
                     if($scope.userAdd.input.length) {
-                        $scope.userAdd.users = $scope.ChatEngine.globalChat.onlineUserSearch.search($scope.userAdd.input);
+                        $scope.userAdd.users = $scope.ChatEngine.global.onlineUserSearch.search($scope.userAdd.input);
                     } else {
                         $scope.userAdd.users = [];
                     }
