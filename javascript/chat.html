@@ -31,7 +31,7 @@
             <div class="card-block">
                 <div class="log" id="chat-output"></div>
                 <div class="input-group">
-                    <input type="text" class="form-control message" placeholder="Your Message..." id="chat-input">
+                    <input type="text" class="form-control message" placeholder="Your Message..." id="chat-input" onkeypress="checkSubmit(event)">
                     <span class="input-group-btn"><button class="btn btn-primary" type="submit" onclick="sendChat()">Send</button></span>
                 </div>
           </div>
@@ -65,7 +65,7 @@
 
         sendChat = function (e) {
 
-            ChatEngine.globalChat.emit('message', {
+            ChatEngine.global.emit('message', {
                 text: textInput.value
             });
 
@@ -75,7 +75,14 @@
 
         };
 
-        ChatEngine.globalChat.on('message', (payload) => {
+        checkSubmit = function(e) {
+
+            if (e.keyCode == 13) {
+                sendChat();
+            }
+        }
+
+        ChatEngine.global.on('message', (payload) => {
 
             let div = document.createElement("p");
             div.innerHTML = payload.sender.uuid + ': ' + payload.data.text;
@@ -83,7 +90,7 @@
 
         });
 
-        ChatEngine.globalChat.onAny((event, data) => {
+        ChatEngine.global.onAny((event, data) => {
             console.info(event, data)
         });
 

@@ -59,7 +59,7 @@
 
         ChatEngine.on('$.ready', () => {
 
-            var chat = new ChatEngine.Chat('jquery-chat');
+            var chat = new ChatEngine.Chat('jquery-chat' + new Date().getTime(), false);
 
             $('#submit').click(() => {
 
