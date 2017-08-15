@@ -60,7 +60,7 @@
 
     ChatEngine.on('$.ready', () => {
 
-        ChatEngine.globalChat.on('$.online.*', (payload) => {
+        ChatEngine.global.on('$.online.*', (payload) => {
 
             let div = document.createElement("li");
             div.innerHTML = payload.user.uuid;

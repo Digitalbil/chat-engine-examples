@@ -57,19 +57,19 @@
 
             });
 
-            $('#submit').click(() => {
+            $('#chat-input').submit(() => {
 
-                console.log('clicked')
-
-                ChatEngine.globalChat.emit('message', {
+                ChatEngine.global.emit('message', {
                     text: $('#message').val()
                 });
 
                 $('#message').val('');
 
+                return false;
+
             });
 
-            ChatEngine.globalChat.on('message', (payload) => {
+            ChatEngine.global.on('message', (payload) => {
 
                 $('#chat').append($('<p><img src="' + payload.sender.state().avatar + '" style="border-radius: 50%; width: 20px; height: 20px; display: inline-block;"/> <strong>' + payload.sender.state().name + ':</strong> ' + payload.data.text + '</p>'));
 
@@ -84,8 +84,6 @@
         }
 
         function buildChatEngine(fbMe, fbAccessToken) {
-
-            console.log('built')
 
             ChatEngine.connect(fbMe.id, fbMe, fbAccessToken);
             // ChatEngine.connect(fbMe.id, fbMe);
@@ -163,7 +161,9 @@
                 <div id="chat" class="log">
                 </div>
 
+                <form id="chat-input">
                 <div class="input-group"><input type="text" class="form-control message" placeholder="Your Message..." id="message">     <span class="input-group-btn"><button class="btn btn-primary" type="submit" id="submit">Send</button></span></div>
+                </form>
 
                 <div id="status">
                 </div>
