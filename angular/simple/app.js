@@ -89,11 +89,12 @@ angular.module('chatApp', ['open-chat-framework'])
         $scope.newChat = function(user) {
 
             // define a channel
-            let chan = new Date().getTime() + 'something';
+            let chan = new Date().getTime();
 
             // create a new chat with that channel
             let newChat = new $scope.ChatEngine.Chat(chan);
 
+            // we need to auth ourselves before we can invite others
             newChat.on('$.connected', () => {
 
                 // this fires a private invite to the user

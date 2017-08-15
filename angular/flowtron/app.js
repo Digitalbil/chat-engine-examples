@@ -67,7 +67,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
         // ChatEngine Configure
         const ChatEngine = ChatEngineCore.create({
             publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
-            subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe'
+            subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe',
         }, {
             globalChannel: 'chat-engine-flowtron',
             authUrl: 'http://localhost:3000/insecure'
@@ -165,7 +165,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
                 let room = {
                     name: channel,
-                    chat: new ChatEngine.Chat(channel),
+                    chat: new ChatEngine.Chat(channel, false),
                     isGroup: channels.indexOf(channel) > -1,
                     messages: [],
                     typingUsers: []
@@ -295,25 +295,23 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
     })
     .controller('OnlineUser', function($scope, ChatEngine, Me, $state) {
 
-        $scope.invite = function(user, channel) {
-
-            // send the clicked user a private message telling them we invited them
-            user.direct.emit('private-invite', {channel: channel});
-
-        }
-
         // create a new chat
         $scope.newChat = function(user) {
 
             // define a channel using the clicked user's username and this client's username
-            let chan = [ChatEngine.globalChat.channel, Me.profile.state().user_id, user.state().user_id].sort().join(':')
+            let chan = [Me.profile.state().user_id, user.state().user_id].sort().join(':')
 
             // create a new chat with that channel
             let newChat = new ChatEngine.Chat(chan);
 
-            $scope.invite(user, chan);
+            newChat.on('$.connected', () => {
 
-            $state.go('dash.chat', {channel: chan})
+                // this fires a private invite to the user
+                newChat.invite(user);
+
+                $state.go('dash.chat', {channel: newChat.channel})
+
+            });
 
         };
 
@@ -331,17 +329,17 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
         $scope.Me = Me;
 
         // bind chat to updates
-        $scope.chat = ChatEngine.globalChat;
+        $scope.chat = ChatEngine.global;
 
         // when I get a private invite
-        Me.profile.direct.on('private-invite', (payload) => {
+        Me.profile.direct.on('$.invite', (payload) => {
 
             // create a new chat and render it in DOM
             $state.go('dash.chat', {channel: payload.data.channel});
 
         });
 
-        ChatEngine.globalChat.plugin(ChatEngineCore.plugin['chat-engine-online-user-search']({
+        ChatEngine.global.plugin(ChatEngineCore.plugin['chat-engine-online-user-search']({
             prop: 'name'
         }));
 
@@ -351,7 +349,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
             fire: () => {
 
                 // get a list of our matching users
-                let found = ChatEngine.globalChat.onlineUserSearch.search($scope.userSearch.input);
+                let found = ChatEngine.global.onlineUserSearch.search($scope.userSearch.input);
 
                 // hide every user
                 for(let uuid in $scope.chat.users) {
