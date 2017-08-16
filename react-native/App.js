@@ -9,15 +9,10 @@ const username = ['user', now].join('-');
 const ChatEngine = ChatEngineCore.create({
   publishKey: 'pub-c-ea1b85f7-8895-4514-b0e0-b505eaaa1b62',
   subscribeKey: 'sub-c-7397fa12-43a3-11e6-bfbb-02ee2ddab7fe'
-}, 'chat-engine-demo-react-native');
-
-const me = ChatEngine.connect(username, {
-    signedOnTime: now,
-    email: new Date()
+}, {
+    globalChannel: 'chat-engine-react',
+    authUrl: 'http://localhost:3000/insecure'
 });
-
-me.plugin(ChatEngineGravatar());
-
 
 export default class PizzaTranslator extends Component {
 
@@ -43,7 +38,7 @@ export default class PizzaTranslator extends Component {
 
     if(this.state.chatInput) {
 
-        ChatEngine.globalChat.emit('message', {
+        ChatEngine.global.emit('message', {
             text: this.state.chatInput
         });
 
@@ -55,16 +50,30 @@ export default class PizzaTranslator extends Component {
 
   componentDidMount () {
 
-    ChatEngine.globalChat.on('message', (payload) => {
 
-      console.log(payload)
+    ChatEngine.connect(username, {
+        signedOnTime: now,
+        email: new Date()
+    });
 
-      console.log('gravatar', 'https:' + payload.sender.state().gravatar)
+    ChatEngine.on('$.ready', (data) => {
 
-      this.messages.push(payload);
+      const me = data.me;
 
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(this.messages)
+      me.plugin(ChatEngineGravatar());
+
+      ChatEngine.global.on('message', (payload) => {
+
+        console.log(payload)
+
+        console.log('gravatar', 'https:' + payload.sender.state().gravatar)
+
+        this.messages.push(payload);
+
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(this.messages)
+        });
+
       });
 
     });
