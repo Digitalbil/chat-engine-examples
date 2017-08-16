@@ -45,7 +45,7 @@ var Chat = React.createClass({
 
     if(this.state.chatInput) {
 
-        ChatEngine.globalChat.emit('message', {
+        ChatEngine.global.emit('message', {
             text: this.state.chatInput
         });
 
@@ -57,7 +57,7 @@ var Chat = React.createClass({
 
   componentDidMount: function() {
 
-    ChatEngine.globalChat.on('message', (payload) => {
+    ChatEngine.global.on('message', (payload) => {
 
         let messages = this.state.messages;
 
