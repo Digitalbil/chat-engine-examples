@@ -65,10 +65,10 @@ const $userTemplate = function(user, chat) {
 // function to create concept of "me"
 const identifyMe = function() {
 
-    me.plugin(ChatEngineCore.plugin['chat-engine-random-username'](ChatEngine.globalChat));
+    me.plugin(ChatEngineCore.plugin['chat-engine-random-username'](ChatEngine.global));
 
     // when I get a private invite
-    me.direct.on('private-invite', (payload) => {
+    me.direct.on('$.invite', (payload) => {
         // create a new chat and render it in DOM
         renderChat(new ChatEngine.Chat(payload.data.channel));
     });
@@ -83,8 +83,8 @@ const identifyMe = function() {
 // render a ChatEngine.User object in a list
 const renderUser = function($el, user, chat) {
 
-    // render user in this chat with their state from globalChat
-    let $tpl = $userTemplate(user, ChatEngine.globalChat);
+    // render user in this chat with their state from global
+    let $tpl = $userTemplate(user, ChatEngine.global);
 
     // listen for a click on the user
     $tpl.find('a').click(() => {
@@ -95,11 +95,13 @@ const renderUser = function($el, user, chat) {
         // create a new chat with that channel
         let newChat = new ChatEngine.Chat(chan);
 
-        // render the new chat on the dom
-        renderChat(newChat);
+        newChat.on('$.connected', () => {
 
-        // send the clicked user a private message telling them we invited them
-        user.direct.emit('private-invite', {channel: newChat.channel});
+            // this fires a private invite to the user
+            newChat.invite(user);
+            renderChat(newChat);
+
+        });
 
     });
 
@@ -264,7 +266,7 @@ const renderChat = function(privateChat) {
 // bind the input from the search bar to the usernameSearch plugin
 const bindUsernamePlugin = function() {
 
-    ChatEngine.globalChat.plugin(ChatEngineCore.plugin['chat-engine-online-user-search']());
+    ChatEngine.global.plugin(ChatEngineCore.plugin['chat-engine-online-user-search']());
 
     // when someone types in the username search
     $('#usernameSearch').on('change keyup paste click blur', () => {
@@ -277,7 +279,7 @@ const bindUsernamePlugin = function() {
 
             // call the plugin function to find out if that search query
             // matches anyone's username
-            let online = ChatEngine.globalChat.onlineUserSearch.search(val);
+            let online = ChatEngine.global.onlineUserSearch.search(val);
 
             // hide all the users
             $('#online-list').find('.list-group-item').hide();
@@ -315,12 +317,12 @@ ChatEngine.on('$.ready', (data) => {
 
     me = data.me;
 
-    // set up the concept of me and globalChat
+    // set up the concept of me and global
     identifyMe();
 
-    // render the ChatEngine.globalChat now that it's defined
+    // render the ChatEngine.global now that it's defined
     // this onlineList can spawn other chats
-    renderOnlineList($('#online-list'), ChatEngine.globalChat);
+    renderOnlineList($('#online-list'), ChatEngine.global);
 
     // plug the search bar into the username plugin
     bindUsernamePlugin();
