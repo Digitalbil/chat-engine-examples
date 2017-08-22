@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AppRegistry, Button, Text, TextInput, Image, View, FlatList, ListView } from 'react-native';
-import ChatEngineCore from '../../chat-engine/src/index.js'
+import ChatEngineCore from 'chat-engine'
 import ChatEngineGravatar from 'chat-engine-gravatar'
 
 const now = new Date().getTime();
