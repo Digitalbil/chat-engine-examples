@@ -10,8 +10,7 @@ const ChatEngine = ChatEngineCore.create({
   publishKey: 'pub-c-ea1b85f7-8895-4514-b0e0-b505eaaa1b62',
   subscribeKey: 'sub-c-7397fa12-43a3-11e6-bfbb-02ee2ddab7fe'
 }, {
-    globalChannel: 'chat-engine-react',
-    authUrl: 'http://localhost:3000/insecure'
+  insecure: true
 });
 
 export default class PizzaTranslator extends Component {
