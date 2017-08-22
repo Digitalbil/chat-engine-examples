@@ -2,13 +2,29 @@
 
 See README.md for info on how to run a react-native app in dev.
 
+## Install
+
+Install the dependencies.
+
+```
+npm install
+```
+
+Run on expo simulator in iOS
+
+```
+npm run ios
+```
+
+## Verified Working Environment
+
 Node:
 
 ```
 node v6.11.0
 ```
 
-Dependencies:
+NPM Dependencies:
 
 ```
 /Users/ian/.nvm/versions/node/v6.11.0/lib
