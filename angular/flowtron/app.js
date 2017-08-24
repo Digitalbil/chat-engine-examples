@@ -70,7 +70,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
             subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe',
         }, {
             globalChannel: 'chat-engine-flowtron',
-            authUrl: 'http://localhost:3000/insecure'
+            insecure: true
         });
 
         let profile = localStorage.getItem('profile');
@@ -299,7 +299,7 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
         $scope.newChat = function(user) {
 
             // define a channel using the clicked user's username and this client's username
-            let chan = [Me.profile.state().user_id, user.state().user_id].sort().join(':')
+            let chan = [Me.profile.state().user_id, user.state().user_id].sort().join('#')
 
             // create a new chat with that channel
             let newChat = new ChatEngine.Chat(chan);

@@ -90,7 +90,7 @@ const renderUser = function($el, user, chat) {
     $tpl.find('a').click(() => {
 
         // define a channel using the clicked user's username and this client's username
-        let chan = [user.uuid, me.uuid].sort().join(':');
+        let chan = [user.uuid, me.uuid].sort().join('#');
 
         // create a new chat with that channel
         let newChat = new ChatEngine.Chat(chan);
