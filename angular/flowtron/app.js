@@ -30,8 +30,6 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
         lock.on('authenticated', function(authResult) {
 
-            console.log(authResult)
-
             localStorage.setItem('access_token', authResult.accessToken);
             localStorage.setItem('id_token', authResult.idToken);
 
@@ -62,12 +60,10 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
     })
     .factory('ChatEngine', function(ngChatEngine) {
 
-        console.log('chat engine')
-
         // ChatEngine Configure
         const ChatEngine = ChatEngineCore.create({
-            publishKey: 'pub-c-c6303bb2-8bf8-4417-aac7-e83b52237ea6',
-            subscribeKey: 'sub-c-67db0e7a-50be-11e7-bf50-02ee2ddab7fe',
+            publishKey: 'pub-c-bcf4e625-d5e0-45de-9f74-f222bf63a4a1',
+            subscribeKey: 'sub-c-70f29a7c-8927-11e7-af73-96e8309537a2',
         }, {
             globalChannel: 'chat-engine-flowtron',
             insecure: true
@@ -109,9 +105,13 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
                         var deferred = $q.defer();
 
-                        ChatEngine.on('$.ready', function () {
+                        if(ChatEngine.ready) {
                             deferred.resolve();
-                        });
+                        } else {
+                            ChatEngine.on('$.ready', function () {
+                                deferred.resolve();
+                            });
+                        }
 
                         return deferred.promise;
                     }
@@ -201,8 +201,6 @@ angular.module('chatApp', ['open-chat-framework', 'auth0.lock', 'ui.router', 'ng
 
                     // if this message was sent by this client
                     payload.isSelf = payload.sender.uuid == Me.profile.uuid;
-
-                    console.log('added as ', payload)
 
                     if(!payload.isSelf && payload.type == 'message' || payload.type == 'history') {
                         sounds.broadcast.play();
