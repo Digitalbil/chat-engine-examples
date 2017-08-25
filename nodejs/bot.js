@@ -15,7 +15,7 @@ ChatEngine.onAny((payload) => {
     console.log('any', payload)
 })
 
-ChatEngine.connect('robot-stephen', {username: 'robot-stephen'}, 'auth-key');
+ChatEngine.connect('robot-stephen', { username: 'robot-stephen' }, 'auth-key');
 
 var chats = {};
 
@@ -27,7 +27,7 @@ ChatEngine.on('$.ready', (data) => {
 
         var chat = chats[payload.data.channel];
 
-        if(!chat) {
+        if (!chat) {
 
             chats[payload.data.channel] = new ChatEngine.Chat(payload.data.channel);
 
@@ -41,7 +41,7 @@ ChatEngine.on('$.ready', (data) => {
 
             chat.on('message', (payload) => {
 
-                if(payload.sender.uuid !== me.uuid) { // add to github issues
+                if (payload.sender.uuid !== me.uuid) { // add to github issues
 
                     setTimeout((argument) => {
 
@@ -49,7 +49,7 @@ ChatEngine.on('$.ready', (data) => {
 
                         setTimeout((argument) => {
 
-                            console.log(payload.sender.state() )
+                            console.log(payload.sender.state())
                             console.log(chat.users)
 
                             chat.emit('message', 'hey there ' + payload.sender.state().username);

@@ -5,30 +5,30 @@ const $chatTemplate = function(chat) {
 
     let html =
         '<div class="chat col-xs-12" id="' + chat.channel + '">' +
-            '<div class="card">' +
-                '<div class="card-header">' +
-                    '<div class="col-sm-6">'  +
-                         chat.channel +
-                    '</div>' +
-                    '<div class="col-sm-6 text-right">' +
-                        '<a href="#" class="close">x</a>' +
-                    '</div>' +
-                '</div>' +
+        '<div class="card">' +
+        '<div class="card-header">' +
+        '<div class="col-sm-6">' +
+        chat.channel +
+        '</div>' +
+        '<div class="col-sm-6 text-right">' +
+        '<a href="#" class="close">x</a>' +
+        '</div>' +
+        '</div>' +
 
-                '<ul class="online-list-sub list-group list-group-flush"></ul>' +
-                '<div class="card-block">' +
-                    '<div class="log"></div>' +
-                    '<p class="typing text-muted"></p>' +
-                    '<form class="send-message">' +
-                        '<div class="input-group">' +
-                            '<input type="text" class="form-control message" placeholder="Your Message...">' +
-                            '<span class="input-group-btn">' +
-                                '<button class="btn btn-primary" type="submit">Send</button>' +
-                            '</span>' +
-                        '</div>' +
-                    '</form>' +
-                '</div>' +
-            '</div>' +
+        '<ul class="online-list-sub list-group list-group-flush"></ul>' +
+        '<div class="card-block">' +
+        '<div class="log"></div>' +
+        '<p class="typing text-muted"></p>' +
+        '<form class="send-message">' +
+        '<div class="input-group">' +
+        '<input type="text" class="form-control message" placeholder="Your Message...">' +
+        '<span class="input-group-btn">' +
+        '<button class="btn btn-primary" type="submit">Send</button>' +
+        '</span>' +
+        '</div>' +
+        '</form>' +
+        '</div>' +
+        '</div>' +
         '</div>';
 
     // define a HTML template for the new chatroom
@@ -39,9 +39,9 @@ const $chatTemplate = function(chat) {
 const $messageTemplate = function(payload, classes) {
 
     let html =
-        '<div class="'+classes+'">' +
-            '<p class="text-muted username">' + payload.sender.state().username + '</p>' +
-            '<p>' + payload.data + '</p>' +
+        '<div class="' + classes + '">' +
+        '<p class="text-muted username">' + payload.sender.state().username + '</p>' +
+        '<p>' + payload.data + '</p>' +
         '</div>';
 
     return $(html);
@@ -54,8 +54,8 @@ const $userTemplate = function(user, chat) {
     // create the HTML template for the user
     let html =
         '<li class="' + user.uuid + ' list-group-item">' +
-            '<a href="#">' + state.username  + '</a> ' +
-            '<span class="show-typing">is typing...</span>' +
+        '<a href="#">' + state.username + '</a> ' +
+        '<span class="show-typing">is typing...</span>' +
         '</li>';
 
     return $(html);
@@ -110,7 +110,7 @@ const renderUser = function($el, user, chat) {
 
     let $existingEl = $el.find('.' + user.uuid);
 
-    if($existingEl.length) {
+    if ($existingEl.length) {
         $existingEl.replaceWith($tpl);
     } else {
 
@@ -124,7 +124,7 @@ const renderUser = function($el, user, chat) {
 // turn ChatEngine.Chat into an online list
 const renderOnlineList = function($el, chat) {
 
-    for(var key in chat.users) {
+    for (var key in chat.users) {
         renderUser($el, chat.users[key], chat);
     }
 
@@ -160,7 +160,7 @@ const renderChat = function(privateChat) {
     $tpl.find('.message').keypress((e) => {
 
         // if that keypress was not "Enter"
-        if(e.which != 13) {
+        if (e.which != 13) {
 
             // then tell ChatEngine this user is typing
             privateChat.typingIndicator.startTyping();
@@ -194,13 +194,13 @@ const renderChat = function(privateChat) {
         classes = classes || '';
 
         // if I didn't send this message
-        if(payload.sender.constructor.name !== "Me") {
+        if (payload.sender.constructor.name !== "Me") {
             // render it on the right
             classes += ' text-xs-right'
         }
 
         // if the uuid of the user who sent this message is the same as the last
-        if(lastSender == payload.sender.uuid) {
+        if (lastSender == payload.sender.uuid) {
             // don't render the username again
             classes += ' hide-username';
         }
@@ -275,7 +275,7 @@ const bindUsernamePlugin = function() {
         let val = $('#usernameSearch').val();
 
         // if the value is set
-        if(val) {
+        if (val) {
 
             // call the plugin function to find out if that search query
             // matches anyone's username
