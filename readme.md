@@ -2,7 +2,9 @@
 
 ## How to run
 
-Just service the root directory with a static file server.
+Run ```npm install``` in the root directory, ```angular/flowtron```, ```react```, and ```react-native``` directories as needed.
+
+Then service the root directory with a static file server.
 
 ### Python
 
