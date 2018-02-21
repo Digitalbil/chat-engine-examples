@@ -1,0 +1,20 @@
+{
+    "browser": {
+        "loader": {
+            "script": "systemjs"
+        },
+        "plugins": {
+			"script": "_dist/javascript/system.config.js",
+			"useLoader": true
+		}
+    },
+    "environments": [
+		"node",
+		{ "browserName": "chrome" }
+	],
+    "functionalSuites": "_dist/tests/integration/desktop.js",
+    "coverage": [
+        "_dist/javascript/*.js",
+        "!_dist/javascript/system.config.js"
+    ]
+}

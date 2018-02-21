@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [
+      "dom",
+      "es5",
+      "es2015.promise",
+      "es2015.symbol.wellknown"
+    ],
+    "sourceMap": true,
+    "importHelpers": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "outDir": "_dist",
+    "rootDir": ".",
+    "types": [
+          "intern",
+          "systemjs"
+    ]
+  },
+  "include": [
+    "javascript/*",
+    "tests/**/*.ts",
+    "node_modules/chat-engine*"
+  ]
+}

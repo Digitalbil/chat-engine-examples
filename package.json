@@ -14,11 +14,27 @@
     "chat-engine-unread-messages": "0.0.x",
     "node-libs-react-native": "^1.0.1",
     "react": "15.4.2",
-    "react-dom": "15.4.2"
+    "react-dom": "15.4.2",
+    "systemjs": "~0.19.47",
+    "tslib": "~1.8.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/systemjs": "~0.20.2",
+    "concurrently": "~3.5.0",
+    "cpx": "~1.5.0",
+    "intern": "^4.1.5",
+    "typescript": "~2.4.1"
+  },
   "scripts": {
-    "deploy": "surge --domain https://chat-engine-examples.surge.sh"
+    "deploy": "surge --domain https://chat-engine-examples.surge.sh",
+    "build": "concurrently \"npm run compile\" \"npm run copy\"",
+    "build:watch": "concurrently \"npm run compile:watch\" \"npm run copy:watch\"",
+    "compile": "tsc -p .",
+    "compile:watch": "tsc -p . --watch",
+    "copy": "cpx \"javascript/*.{js,html,css}\" _dist/javascript && cpx \"node_modules/chat-engine*\" _dist/node_modules" ,
+    "copy:watch": "cpx \"javascript/*.{js,html,css}\" _dist/javascript --watch && cpx \"node_modules/chat-engine*\" _dist/node_modules --watch",
+    "pretest": "npm run build",
+    "test": "intern"
   },
   "author": "Ian Jennings"
 }
